@@ -14,14 +14,14 @@
     <link href="css/bootstrap.min.css?ver=1.2.0" rel="stylesheet">
     <link href="css/font-awesome/css/all.min.css?ver=1.2.0" rel="stylesheet">
     <link href="css/main.css?ver=1.2.0" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="images/Asset/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="asset/favicon.ico">
   </head>
   <body id="top">
     <div class="page">
       <header>
         <div class="pp-header">
           <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container"><a href="index.html"><img src="images/Asset/favicon.ico" alt="Logo"></a><a class="navbar-brand" href="index.html">&nbsp Images Free</a>
+            <div class="container"><a href="index.html"><img src="asset/favicon.ico" alt="Logo"></a><a class="navbar-brand" href="index.html">&nbsp Images Free</a>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav ml-auto">
@@ -69,32 +69,32 @@
     let htmlTag = "";
     let data = "";
     function getinnerHTML_Background(){
-      getDataByAjax("images/Source_Background.csv", "images/Background/", "Background");
+      getDataByAjax("source/Source_Background.csv");
     }
 
     function getinnerHTML_People(){
-      getDataByAjax("images/Source_People.csv", "images/People/", "People");
+      getDataByAjax("source/Source_People.csv");
     }
 
     function getinnerHTML_School(){
-      getDataByAjax("images/Source_School.csv", "images/School/", "School");
+      getDataByAjax("source/Source_School.csv");
     }
 
     function getinnerHTML_Computer(){
-      getDataByAjax("images/Source_Computer.csv", "images/Computer/", "Computer");
+      getDataByAjax("source/Source_Computer.csv");
     }
 
     function getinnerHTML_Living_Online(){
-      getDataByAjax("images/Source_Living_Online.csv", "images/Living_Online/", "Living_Online");
+      getDataByAjax("source/Source_Living_Online.csv");
     }
 
-    function getDataByAjax(urlImages, dirImage, nameSubjectImages){
+    function getDataByAjax(urlImages){
       htmlTag = "";
       $.ajax({
         type: "GET",  
         
         url: urlImages,
-        dataType: "text",       
+        dataType: "text",
         success: function(response)  
         {
           
@@ -104,9 +104,9 @@
             var itemData = data[count].split(",");
           
             htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
-                  + "<a href=\"" + itemData[2] + "\" target=\"_blank\">"
+                  + "<a href=\"" + itemData[1] + "\" target=\"_blank\">"
                   + "<figure class=\"pp-effect\">"
-                  + "<img class=\"img-fluid\" src=\"" + dirImage + itemData[0] + itemData[1] + "\" alt=\"" + itemData[0] + "\"/>"
+                  + "<img class=\"img-fluid\" src=\"" + itemData[1] + "\" alt=\"" + itemData[0] + "\"/>"
                   + "<figcaption>"
                   + "<div class=\"h4\">" + itemData[0] + "</div>"
                   + "<p>" + "Image source" + "</p>"
