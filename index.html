@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Images Free</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin"/>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;600;700&amp;display=swap"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;600;700&amp;display=swap" media="print" onload="this.media='all'"/>
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;600;700&amp;display=swap"/>
+    </noscript>
+    <link href="css/bootstrap.min.css?ver=1.2.0" rel="stylesheet">
+    <link href="css/font-awesome/css/all.min.css?ver=1.2.0" rel="stylesheet">
+    <link href="css/main.css?ver=1.2.0" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="images/Asset/favicon.ico">
+  </head>
+  <body id="top">
+    <div class="page">
+      <header>
+        <div class="pp-header">
+          <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container"><a href="index.html"><img src="images/Asset/favicon.ico" alt="Logo"></a><a class="navbar-brand" href="index.html">&nbsp Images Free</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav ml-auto">
+                  <li class="nav-item active"><a class="nav-link" href="index.html">Home</a>
+                  </li>
+                  <li class="nav-item"><a class="nav-link" href="guide.html">Guide</a>
+                  </li>                 
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="container">
+
+          <div class="container px-0 py-4">
+            <div class="pp-category-filter">
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-primary pp-filter-button" href="#"onclick="getinnerHTML_Background()">Background</button>
+                  <button class="btn btn-outline-primary pp-filter-button" href="#" onclick="getinnerHTML_People()">People</button>
+                  <button class="btn btn-outline-primary pp-filter-button" href="#" onclick="getinnerHTML_School()">School</button>
+                  <button class="btn btn-outline-primary pp-filter-button" href="#" onclick="getinnerHTML_Computer()">Computer</button>
+                  <button class="btn btn-outline-primary pp-filter-button" href="#" onclick="getinnerHTML_Living_Online()">Living Online</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="container px-0">
+            <div class="pp-gallery">
+              <div id="contentImage" class="card-columns">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="scripts/bootstrap.bundle.min.js?ver=1.2.0"></script>
+  <script src="scripts/main.js?ver=1.2.0"></script>
+
+  <script>    
+    let htmlTag = "";
+    let data = "";
+    function getinnerHTML_Background(){
+      getDataByAjax("images/Source_Background.csv", "images/Background/", "Background");
+    }
+
+    function getinnerHTML_People(){
+      getDataByAjax("images/Source_People.csv", "images/People/", "People");
+    }
+
+    function getinnerHTML_School(){
+      getDataByAjax("images/Source_School.csv", "images/School/", "School");
+    }
+
+    function getinnerHTML_Computer(){
+      getDataByAjax("images/Source_Computer.csv", "images/Computer/", "Computer");
+    }
+
+    function getinnerHTML_Living_Online(){
+      getDataByAjax("images/Source_Living_Online.csv", "images/Living_Online/", "Living_Online");
+    }
+
+    function getDataByAjax(urlImages, dirImage, nameSubjectImages){
+      htmlTag = "";
+      $.ajax({
+        type: "GET",  
+        
+        url: urlImages,
+        dataType: "text",       
+        success: function(response)  
+        {
+          
+          data = response.split("\n");
+          //console.log(data);
+          for(var count = 0; count < data.length-1; count++){
+            var itemData = data[count].split(",");
+          
+            htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
+                  + "<a href=\"" + itemData[2] + "\" target=\"_blank\">"
+                  + "<figure class=\"pp-effect\">"
+                  + "<img class=\"img-fluid\" src=\"" + dirImage + itemData[0] + itemData[1] + "\" alt=\"" + itemData[0] + "\"/>"
+                  + "<figcaption>"
+                  + "<div class=\"h4\">" + itemData[0] + "</div>"
+                  + "<p>" + "Image source" + "</p>"
+                  + "</figcaption>"
+                  + "</figure></a></div>";
+      
+          }
+          document.getElementById("contentImage").innerHTML = htmlTag;
+        }   
+      });
+      
+
+    }
+
+    window.onload = function() {
+      getinnerHTML_Background();
+    }
+
+  </script>
+  </body>
+</html>
