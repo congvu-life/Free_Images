@@ -305,4 +305,9 @@ body {
 .pp-section {
   padding-top: 6rem; }
 .pp-section-guide {
-  padding-top: 3rem; }
+  padding-top: 2rem; }
+.h4{
+  font-weight: bold;
+  color: #ff0000;
+  padding-top: 2rem;
+}
