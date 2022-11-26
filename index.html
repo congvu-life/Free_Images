@@ -15,6 +15,28 @@
     <link href="css/font-awesome/css/all.min.css?ver=1.2.0" rel="stylesheet">
     <link href="css/main.css?ver=1.2.0" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="asset/favicon.ico">
+    <style>
+      .pagination {
+        display: inline-block;
+      }
+      
+      .pagination button {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-width: 1px;
+        margin: 1px;
+      }
+      
+      .pagination button.active {
+        background-color: #4CAF50;
+        color: white;
+      }
+      
+      .pagination button:hover:not(.active) {background-color: #ddd;}
+    </style>
+  
   </head>
   <body id="top">
     <div class="page">
@@ -51,7 +73,10 @@
             </div>
           </div>
           <div class="container px-0">
-            <div class="pp-gallery">
+            <div class="pp-gallery">              
+              <div id="contentPagination" class="pagination">
+                
+              </div>
               <div id="contentImage" class="card-columns">
                 
               </div>
@@ -68,57 +93,203 @@
   <script>    
     let htmlTag = "";
     let data = "";
+    let check = false;
     function getinnerHTML_Background(){
+      check = false;
       getDataByAjax("source/Source_Background.csv");
     }
 
     function getinnerHTML_People(){
+      check = false;
       getDataByAjax("source/Source_People.csv");
     }
 
     function getinnerHTML_School(){
+      check = false;
       getDataByAjax("source/Source_School.csv");
     }
 
     function getinnerHTML_Computer(){
+      check = false;
       getDataByAjax("source/Source_Computer.csv");
     }
 
     function getinnerHTML_Living_Online(){
+      check = false;
       getDataByAjax("source/Source_Living_Online.csv");
     }
 
+
+
     function getDataByAjax(urlImages){
-      htmlTag = "";
-      $.ajax({
-        type: "GET",  
-        
-        url: urlImages,
-        dataType: "text",
-        success: function(response)  
-        {
+      if(check == false){
+        htmlTag = "";
+        htmlPagination = "";
+        dataOfPage = [];
+        numberPage = 0;
+        currentPage = 1;
+        $.ajax({
+          type: "GET",  
           
-          data = response.split("\n");
-          //console.log(data);
-          for(var count = 0; count < data.length-1; count++){
-            var itemData = data[count].split(",");
+          url: urlImages,
+          dataType: "text",
+          success: function(response)  
+          {
+            
+            data = response.split("\n");
+            //console.log(data);
+            if((data.length-1)%3 == 0){
+              numberPage = (data.length - 1)/3;
+            }
+            else{
+              numberPage = (data.length - 1 - (data.length-1)%3)/3 + 1;
+            }
+            for(var count = 0; count < data.length-1; count++){
+              var itemData = data[count].split(",");
+              dataOfPage[count] = itemData;
+              if(numberPage > 0 && count < 3){
+                htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
+                    + "<a href=\"" + itemData[1] + "\" target=\"_blank\">"
+                    + "<figure class=\"pp-effect\">"
+                    + "<img class=\"img-fluid\" src=\"" + itemData[1] + "\" alt=\"" + itemData[0] + "\"/>"
+                    + "<figcaption>"
+                    + "<div class=\"h4\">" + itemData[0] + "</div>"
+                    + "<p>" + "Image source" + "</p>"
+                    + "</figcaption>"
+                    + "</figure></a></div>";
+              }             
+        
+            }
+            document.getElementById("contentImage").innerHTML = htmlTag;            
+            console.log(dataOfPage);
+            
+            htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(-2) + ")\">&laquo;</button>";
+            for(var count = 1; count <= numberPage; count++){
+              if(count != 1){
+                htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(count) +")\">" + String(count) + "</button>";
+              }
+              else{
+                htmlPagination = htmlPagination + "<button class=\"active\" onclick=\"gotoPage(" + String(count) +")\">" + String(count) + "</button>";
+              }
+            }             
+            htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(-1) + ")\">&raquo;</button>";
+            document.getElementById("contentPagination").innerHTML = htmlPagination;
+
+          }   
+        });
+        check = true;
+      }      
+
+    }
+
+    function gotoPage(page){      
+      if(page == -1){
+        if(currentPage < numberPage){
+          htmlTag = "";          
+          startItem = currentPage*3;
+          if(currentPage == numberPage){
+            endItem = dataOfPage.length;
+          }
+          else{
+            endItem = startItem + 3;
+          }
+          for(var count = startItem; count < endItem; count++){
           
             htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
-                  + "<a href=\"" + itemData[1] + "\" target=\"_blank\">"
-                  + "<figure class=\"pp-effect\">"
-                  + "<img class=\"img-fluid\" src=\"" + itemData[1] + "\" alt=\"" + itemData[0] + "\"/>"
-                  + "<figcaption>"
-                  + "<div class=\"h4\">" + itemData[0] + "</div>"
-                  + "<p>" + "Image source" + "</p>"
-                  + "</figcaption>"
-                  + "</figure></a></div>";
-      
-          }
+                + "<a href=\"" + dataOfPage[count][1] + "\" target=\"_blank\">"
+                + "<figure class=\"pp-effect\">"
+                + "<img class=\"img-fluid\" src=\"" + dataOfPage[count][1] + "\" alt=\"" + dataOfPage[count][0] + "\"/>"
+                + "<figcaption>"
+                + "<div class=\"h4\">" + dataOfPage[count][0] + "</div>"
+                + "<p>" + "Image source" + "</p>"
+                + "</figcaption>"
+                + "</figure></a></div>";
+          }       
           document.getElementById("contentImage").innerHTML = htmlTag;
-        }   
-      });
+          htmlPagination = "";
+          currentPage = currentPage + 1;
+          addContentPagination(currentPage);   
+        }
+        else{
+          return;
+        }
+      }
+      else if(page == -2){
+        if(currentPage > 1){
+          currentPage = currentPage - 1;
+          htmlTag = "";          
+          startItem = (currentPage - 1)*3;
+          if(currentPage == numberPage){
+            endItem = dataOfPage.length;
+          }
+          else{
+            endItem = startItem + 3;
+          }
+          for(var count = startItem; count < endItem; count++){
+          
+            htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
+                + "<a href=\"" + dataOfPage[count][1] + "\" target=\"_blank\">"
+                + "<figure class=\"pp-effect\">"
+                + "<img class=\"img-fluid\" src=\"" + dataOfPage[count][1] + "\" alt=\"" + dataOfPage[count][0] + "\"/>"
+                + "<figcaption>"
+                + "<div class=\"h4\">" + dataOfPage[count][0] + "</div>"
+                + "<p>" + "Image source" + "</p>"
+                + "</figcaption>"
+                + "</figure></a></div>";
+          }       
+          document.getElementById("contentImage").innerHTML = htmlTag;
+          htmlPagination = "";
+          
+          addContentPagination(currentPage);   
+        }
+      }
+      else{
+        htmlTag = "";
+        page = Number(page);
+        tmpPage = page;
+        startItem = (page-1)*3;
+        if(page == numberPage){
+          endItem = dataOfPage.length;
+        }
+        else{
+          endItem = startItem + 3;
+        }
+        
+        for(var count = startItem; count < endItem; count++){
+        
+          htmlTag = htmlTag + "<div class=\"card\" data-groups=\"[&quot;" + "nature" + "&quot;]\">"
+              + "<a href=\"" + dataOfPage[count][1] + "\" target=\"_blank\">"
+              + "<figure class=\"pp-effect\">"
+              + "<img class=\"img-fluid\" src=\"" + dataOfPage[count][1] + "\" alt=\"" + dataOfPage[count][0] + "\"/>"
+              + "<figcaption>"
+              + "<div class=\"h4\">" + dataOfPage[count][0] + "</div>"
+              + "<p>" + "Image source" + "</p>"
+              + "</figcaption>"
+              + "</figure></a></div>";
+        }       
+        document.getElementById("contentImage").innerHTML = htmlTag;
+        htmlPagination = "";
+        currentPage = page;
+        addContentPagination(currentPage);
+      }
       
 
+    }
+
+    //Function update content of Pagination
+    function addContentPagination(page){
+      htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(-2) + ")\">&laquo;</button>";
+      for(var count = 1; count <= numberPage; count++){
+        if(count != page){
+          htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(count) +")\">" + String(count) + "</button>";
+        }
+        else{
+          htmlPagination = htmlPagination + "<button class=\"active\" onclick=\"gotoPage(" + String(count) +")\">" + String(count) + "</button>";
+        }
+      }             
+      htmlPagination = htmlPagination + "<button onclick=\"gotoPage(" + String(-1) + ")\">&raquo;</button>";
+      document.getElementById("contentPagination").innerHTML = htmlPagination;
+    
     }
 
     window.onload = function() {
